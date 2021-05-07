@@ -10,10 +10,10 @@ public class Resize {
 	}
 
 	public static class ResponseBody {
-		public Error err;
+		public String err;
 		public String imageBase64;
 
-		public ResponseBody(Error err, String imageInBase64) {
+		public ResponseBody(String err, String imageInBase64) {
 			this.err = err;
 			this.imageBase64 = imageInBase64;
 		}

@@ -20,15 +20,12 @@ public class ResizeImageApplication {
 
 	@PostMapping("/resize")
 	public Resize.ResponseBody resize(@RequestBody Resize.RequestBody requestBody) throws IOException {
-
 		ImageOps imgOps = new ImageOps();
 
 		if (requestBody.base64 != null && !requestBody.base64.isEmpty() && requestBody.scale > 0) {
-			String imageInBase64 = imgOps.scaleImage(requestBody.base64, requestBody.scale);
-			return new Resize.ResponseBody(null, imageInBase64);
+			return imgOps.scaleImage(requestBody.base64, requestBody.scale);
 		} else if (requestBody.url != null && !requestBody.url.isEmpty() && requestBody.scale > 0) {
-			String imageInBase64 = imgOps.scaleRemoteImage(requestBody.url, requestBody.scale);
-			return new Resize.ResponseBody(null, imageInBase64);
+			return imgOps.scaleRemoteImage(requestBody.url, requestBody.scale);
 		}
 
 		return new Resize.ResponseBody(null, null);

@@ -4,13 +4,14 @@ import java.awt.*;
 import java.net.URL;
 import java.util.Base64;
 import java.io.IOException;
-import javax.imageio.ImageIO;
-import java.io.BufferedInputStream;
 import java.io.InputStream;
+import javax.imageio.ImageIO;
 import java.io.ByteArrayInputStream;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.awt.geom.AffineTransform;
+
+import net.abdus.resizeimage.RequestResponseEntity.Resize;
 
 class ImageOps {
 	private BufferedImage base64ToBin(String base64) throws IOException {
@@ -27,6 +28,10 @@ class ImageOps {
 	}
 
 	public static String scaled(BufferedImage img, double scale) throws IOException {
+		if (img == null) {
+			return null;
+		}
+
 		int width = (int) ((double) img.getWidth() * scale);
 		int height = (int) ((double) img.getHeight() * scale);
 		BufferedImage resized = new BufferedImage(width, height, img.getType());
@@ -42,24 +47,36 @@ class ImageOps {
 		return Base64.getEncoder().encodeToString(output.toByteArray());
 	}
 
-	public String scaleImage(String base64, double scale) {
+	public Resize.ResponseBody scaleImage(String base64, double scale) {
 		try {
 			BufferedImage img = this.base64ToBin(base64);
-			return scaled(img, scale);
-		} catch (IOException ex) {
+			String result_b64 = scaled(img, scale);
+
+			if (result_b64 == null) {
+				throw new RuntimeException("could not load image");
+			}
+
+			return new Resize.ResponseBody(null, result_b64);
+		} catch (Exception ex) {
 			ex.printStackTrace();
-			return null;
+			return new Resize.ResponseBody(ex.getMessage(), null);
 		}
 
 	}
 
-	public String scaleRemoteImage(String url, double scale) {
+	public Resize.ResponseBody scaleRemoteImage(String url, double scale) {
 		try {
 			BufferedImage img = downloadImageFromUrl(url);
-			return scaled(img, scale);
-		} catch (IOException ex) {
+			String result_b64 = scaled(img, scale);
+
+			if (result_b64 == null) {
+				throw new RuntimeException("could not load image");
+			}
+
+			return new Resize.ResponseBody(null, result_b64);
+		} catch (Exception ex) {
 			ex.printStackTrace();
-			return null;
+			return new Resize.ResponseBody(ex.getMessage(), null);
 		}
 	}
 
