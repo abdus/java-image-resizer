@@ -15,7 +15,7 @@ and `scale` as body param.
 
 ```
 curl --request POST \
-  --url http://localhost:8080/resize \
+  --url https://java-img-resize.herokuapp.com/resize \
   --header 'content-type: application/json' \
   --data '{
 	"scale": 0.1,
@@ -31,7 +31,7 @@ to resize an image available at a remote location:
 
 ```
 curl --request POST \
-  --url http://localhost:8080/resize \
+  --url https://java-img-resize.herokuapp.com/resize \
   --header 'content-type: application/json' \
   --data '{
 	"scale": 0.1,
