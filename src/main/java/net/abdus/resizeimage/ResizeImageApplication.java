@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import net.abdus.resizeimage.RequestBody.UrlEntity;
+import net.abdus.resizeimage.RequestResponseEntity.Resize;
 
 @SpringBootApplication
 @RestController
@@ -19,12 +19,19 @@ public class ResizeImageApplication {
 	}
 
 	@PostMapping("/resize")
-	public String resize(@RequestBody UrlEntity urlEntity) throws IOException {
+	public Resize.ResponseBody resize(@RequestBody Resize.RequestBody requestBody) throws IOException {
 
 		ImageOps imgOps = new ImageOps();
-		String imageInBase64 = imgOps.scaleImage(urlEntity.url, 0.01);
 
-		return imageInBase64 != null ? "data:image/png;base64," + imageInBase64 : "SOMETHING WENT WRONG";
+		if (requestBody.base64 != null && !requestBody.base64.isEmpty() && requestBody.scale > 0) {
+			String imageInBase64 = imgOps.scaleImage(requestBody.base64, requestBody.scale);
+			return new Resize.ResponseBody(null, imageInBase64);
+		} else if (requestBody.url != null && !requestBody.url.isEmpty() && requestBody.scale > 0) {
+			String imageInBase64 = imgOps.scaleRemoteImage(requestBody.url, requestBody.scale);
+			return new Resize.ResponseBody(null, imageInBase64);
+		}
+
+		return new Resize.ResponseBody(null, null);
 	}
 
 }
